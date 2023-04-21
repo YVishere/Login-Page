@@ -1,12 +1,14 @@
+#uploaded on 17th april 2023 to just be a normal login page app
+#updated on 21st april 2023 to be imported to other python files - automatically closes the login page on successful login so the main() can be called once at the start
+
 from tkinter import *
 import numpy as np
-from tkinter import filedialog as fd
 
+global root
+global login
 class loginSystem(Frame):
     def __init__(self, window):
         super().__init__(window)
-        global b
-        b=True
         self.vcmd = self.register(self.callback)
         self.filepath1 = "C:/Users/ADMIN/Documents/Username.txt"
         self.filepath2="C:/Users/ADMIN/Documents/Pass.txt"
@@ -48,7 +50,11 @@ class loginSystem(Frame):
             self.enterpass1.configure(bg='Grey')
             self.enterpass2.configure(bg='Grey')
 
-    def charUserCount(self, e, *args):
+    def charUserCount(self, e,b, *args):
+
+        if b:
+            self.labelChange(-1, True)
+
         self.num=len(self.vars.get())
         if self.num<=10:
             if self.num==10:
@@ -60,7 +66,10 @@ class loginSystem(Frame):
             decreased="".join(self.vars.get()[:10])
             self.vars.set(decreased)
 
-    def charPassCount(self, e, *args):
+    def charPassCount(self, e,b, *args):
+        if b:
+            self.labelChange(-1, True)
+
         self.num=len(self.var.get())
         if self.num<=10:
             if self.num==10:
@@ -80,8 +89,8 @@ class loginSystem(Frame):
         self.enterpass2.configure(bg='Grey')
         entry.configure(bg='White')
 
-    def labelChange(self, n, event):
-        if event:
+    def labelChange(self, n, e):
+        if e:
             self.msgLabel.configure(text="")
             return
         if n==-1:
@@ -92,8 +101,6 @@ class loginSystem(Frame):
             self.msgLabel.configure(text="Login successful", fg='#F5FFFA')
 
     def login(self, *args):
-        if not b:
-            return
         if self.password.get()=="" or self.username.get()=="":
             self.password.delete(0,END)
             self.username.delete(0,END)
@@ -151,6 +158,10 @@ class loginSystem(Frame):
     def details(self, n):
         self.vars.set(self.autofillArray[n])
         self.var.set(self.autofillArray[n+1])
+
+        self.username.configure(bg='#fffe7a')
+        self.password.configure(bg='#fffe7a')
+
         self.autofill.withdraw()
 
     def request(self):
@@ -196,18 +207,15 @@ class loginSystem(Frame):
 
     def endRequest(self):
         self.ask.grab_release()
+        self.after(1000,close)
         self.ask.destroy()
 
     def capsON(self, *args):
-        if not b:
-            return
         self.capsLabel.pack()
         self.capsLabel21.pack(side=RIGHT)
         self.capsLabel22.pack(side=RIGHT)
 
     def capsOFF(self, *args):
-        if not b:
-            return
         self.capsLabel.pack_forget()
         self.capsLabel21.pack_forget()
         self.capsLabel22.pack_forget()
@@ -438,16 +446,21 @@ class loginSystem(Frame):
                                 , command=lambda: self.changeFrame(self.mainframe))
         self.buttonText2.pack(side=LEFT)
 
+def close():
+    global root
+    root.destroy()
+
 def main():
+    global root
+    global login
     root = Tk()
     root.title("Login")
     root.configure(bg='Black')
     root.resizable(False, False)
     login = loginSystem(root)
-    login.username.bind("<Key>", lambda event: login.labelChange(-1, True))
-    login.password.bind("<Key>", lambda event: login.labelChange(-1, True))
-    login.username.bind("<Key>", lambda event: login.charUserCount(event.char))
-    login.password.bind("<Key>", lambda event: login.charPassCount(event.char))
+    root.grab_set()
+    login.username.bind("<Key>", lambda event: login.charUserCount(event.char, True))
+    login.password.bind("<Key>", lambda event: login.charPassCount(event.char, True))
     root.bind("<Lock-KeyRelease>", login.capsON)
     root.bind("<Lock-KeyPress>", login.capsOFF)
     root.bind("<Return>", login.login)
@@ -458,10 +471,8 @@ def main():
     login.enteruser.bind("<Button-1>", lambda event: login.focuscheck(login.enteruser))
     login.enterpass1.bind("<Button-1>", lambda event: login.focuscheck(login.enterpass1))
     login.enterpass2.bind("<Button-1>", lambda event: login.focuscheck(login.enterpass2))
-    login.autofill.protocol("WM_DELETE_WINDOW",login.autofill.withdraw)
+    login.autofill.protocol("WM_DELETE_WINDOW", login.autofill.withdraw)
     login.mainloop()
-
-
 
 if __name__ == '__main__':
     main()
