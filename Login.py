@@ -1,5 +1,6 @@
 #uploaded on 17th april 2023 to just be a normal login page app
 #updated on 21st april 2023 to be imported to other python files - automatically closes the login page on successful login so the main() can be called once at the start
+#updated on 23rd april 2023 to make it so that the whole program is terminated if the login page is closed rather than skipping the login step
 
 from tkinter import *
 import numpy as np
@@ -472,6 +473,7 @@ def main():
     login.enterpass1.bind("<Button-1>", lambda event: login.focuscheck(login.enterpass1))
     login.enterpass2.bind("<Button-1>", lambda event: login.focuscheck(login.enterpass2))
     login.autofill.protocol("WM_DELETE_WINDOW", login.autofill.withdraw)
+    root.protocol("WM_DELETE_WINDOW", quit)
     login.mainloop()
 
 if __name__ == '__main__':
