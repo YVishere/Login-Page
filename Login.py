@@ -1,9 +1,12 @@
 #uploaded on 17th april 2023 to just be a normal login page app
 #updated on 21st april 2023 to be imported to other python files - automatically closes the login page on successful login so the main() can be called once at the start
 #updated on 23rd april 2023 to make it so that the whole program is terminated if the login page is closed rather than skipping the login step
+#updated on 24th may 2023 to add a progressbar upon successfully passing the login step. Problem identified: A popup comes up due to the update function for progressbar
 
 from tkinter import *
 import numpy as np
+from tkinter import ttk
+import time
 
 global root
 global login
@@ -207,6 +210,19 @@ class loginSystem(Frame):
         self.endRequest()
 
     def endRequest(self):
+
+        self.progressBar.grid(row=3, column=0, columnspan=3, sticky='sew')
+
+        for i in range(1,6):
+            self.progressBar['value']=20*i
+            self.update()
+            for children in self.winfo_children():
+                s="%s"%children
+                n=s.find("toplevel2")
+                if not n==-1:
+                    children.destroy()
+            time.sleep(0.2)
+
         self.ask.grab_release()
         self.after(1000,close)
         self.ask.destroy()
@@ -225,7 +241,7 @@ class loginSystem(Frame):
         frame.tkraise()
 
     def UI(self):
-        self.configure(bg='White')
+        self.configure(bg='#2C3539')
         self.pack(fill=BOTH, expand=True)
         self.mainframe=Frame(self, bg='#2C3539', relief=RAISED)
         self.mainframe.grid(row=0, column=0, sticky='nsew')
@@ -289,6 +305,10 @@ class loginSystem(Frame):
                                  activebackground='#2C3539', activeforeground='#F5FFFA', relief=FLAT
                                  , cursor="hand2", command=lambda: self.changeFrame(self.registerFrame))
         self.buttonText.pack(side=LEFT)
+
+        self.progressBar=ttk.Progressbar(self,orient='horizontal',mode='determinate'
+                                         , length=300)
+        self.columnconfigure(0, weight=1)
 
     def passCheck(self, *args, **kwargs):
         s1=self.S21.get()
